@@ -1,16 +1,24 @@
 package com.cos.blog.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity // Member클래스가 자동으로 MySQL에 테이블이 생성이 된다.
 public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 프로젝트에서 연결된 DB의 넘버링 전략을 따라간다.
+    @Column(name = "member_id")
     private Long id;    // auto_increment
 
     @Column(nullable = false, length = 30)
