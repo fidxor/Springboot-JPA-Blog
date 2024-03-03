@@ -1,5 +1,6 @@
 package com.cos.blog.test;
 
+import com.cos.blog.model.Member;
 import org.springframework.web.bind.annotation.*;
 
 // 사용자가 요청 -> 응답(Data)
