@@ -32,9 +32,9 @@ public class Board {
     @ColumnDefault("0")
     private int count; // 조회수
 
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
+    private User user;
 
     @OneToMany(mappedBy = "board") // mappedBy 연관관계의 주인이 아니다.
     private List<Reply> reply;

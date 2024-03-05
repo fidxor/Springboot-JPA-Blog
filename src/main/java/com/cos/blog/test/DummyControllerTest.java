@@ -1,9 +1,9 @@
 package com.cos.blog.test;
 
-import com.cos.blog.model.Member;
+import com.cos.blog.model.User;
 import com.cos.blog.model.RoleType;
-import com.cos.blog.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cos.blog.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @RestController // html 파일이 아닌 data를 리턴해주는 controller
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class DummyControllerTest {
 
-    @Autowired // 의존성 주입
-    private MemberRepository memberRepository;
+    private final UserRepository userRepository;
 
     /**
      * 회원 정보 insert
@@ -36,16 +36,16 @@ public class DummyControllerTest {
 
     @PostMapping("/dummy/join2")
     @Transactional
-    public String join2(Member member) { // key, value (약속된 규칙)
-        System.out.println("id : " + member.getId());
-        System.out.println("username : " + member.getUsername());
-        System.out.println("password : " + member.getPassword());
-        System.out.println("email : " + member.getEmail());
-        System.out.println("role : " + member.getRole());
-        System.out.println("reateDate + " + member.getCreateDate());
+    public String join2(User user) { // key, value (약속된 규칙)
+        System.out.println("id : " + user.getId());
+        System.out.println("username : " + user.getUsername());
+        System.out.println("password : " + user.getPassword());
+        System.out.println("email : " + user.getEmail());
+        System.out.println("role : " + user.getRole());
+        System.out.println("reateDate + " + user.getCreateDate());
 
-        member.setRole(RoleType.USER);
-        memberRepository.save(member);
+        user.setRole(RoleType.USER);
+        userRepository.save(user);
 
         return "회원가입이 완료되었습니다.";
     }
@@ -56,7 +56,7 @@ public class DummyControllerTest {
     // {id} 주소로 파라미터를 전달 받을 수 있음.
     // http://localhost:8000/blog/dummy/user/3
     @GetMapping("/dummy/user/{id}")
-    public Member detail(@PathVariable Long id) {
+    public User detail(@PathVariable Long id) {
         // id 값이 데이터베이스에 없으며 null이 되기 때문에
         // Optional로 객체를 감싸서 넘겨주게 된다.
 
@@ -64,7 +64,7 @@ public class DummyControllerTest {
 //        Member member = memberRepository.findById(id).orElseThrow(() -> {
 //            return new IllegalArgumentException("해당 유저는 없습니다. id : " + id);
 //        });
-        Member member = memberRepository.findById(id).orElseThrow(new Supplier<IllegalArgumentException>() {
+        User user = userRepository.findById(id).orElseThrow(new Supplier<IllegalArgumentException>() {
             @Override
             public IllegalArgumentException get() {
                 return new IllegalArgumentException("해당 유저는 없습니다. id : " + id);
@@ -77,24 +77,24 @@ public class DummyControllerTest {
         // 스프링부트 = MessageConverter가 응답시에 자동으로 작동
         // 만약에 자바 오브젝트를 리턴하게 되면 MessageConverter가 Jackson 라이브러리를 호출해서
         // member오브젝트를 json으로 변환해서 웹브라으저에 리턴하게 된다.
-        return member;
+        return user;
     }
 
     /**
      * 회원조회 페이징
      */
     @GetMapping("/dummy/users")
-    public List<Member> list() {
-        return memberRepository.findAll();
+    public List<User> list() {
+        return userRepository.findAll();
     }
 
     @GetMapping("/dummy/user/page")
-    public List<Member> pageList(@PageableDefault(size = 2, sort = "id", direction = Sort.Direction.DESC)Pageable pageable) {
-        Page<Member> pagingMember = memberRepository.findAll(pageable);
+    public List<User> pageList(@PageableDefault(size = 2, sort = "id", direction = Sort.Direction.DESC)Pageable pageable) {
+        Page<User> pagingMember = userRepository.findAll(pageable);
 
-        List<Member> members = pagingMember.getContent();
+        List<User> users = pagingMember.getContent();
 
-        return members;
+        return users;
     }
 
     /**
@@ -102,18 +102,18 @@ public class DummyControllerTest {
      */
     @Transactional
     @PutMapping("/dummy/user/{id}")
-    public Member updateMember(@PathVariable Long id, @RequestBody Member request) {
+    public User updateMember(@PathVariable Long id, @RequestBody User request) {
         System.out.println("id : " + id);
         System.out.println("password : " + request.getPassword());
         System.out.println("email : " + request.getEmail());
 
-        Member member = memberRepository.findById(id).orElseThrow(() -> {
+        User user = userRepository.findById(id).orElseThrow(() -> {
             return new IllegalArgumentException("수정에 실패하였습니다.");
         });
 
-        member.setPassword(request.getPassword());
-        member.setEmail(request.getEmail());
-        return member;
+        user.setPassword(request.getPassword());
+        user.setEmail(request.getEmail());
+        return user;
     }
 
     /**
@@ -128,14 +128,14 @@ public class DummyControllerTest {
 //            return "삭제 할수 없습니다. 해당 id가 DB에 없습니다.";
 //        }
 
-        Member member = memberRepository.findById(id).orElseThrow(new Supplier<IllegalArgumentException>() {
+        User user = userRepository.findById(id).orElseThrow(new Supplier<IllegalArgumentException>() {
             @Override
             public IllegalArgumentException get() {
                 return new IllegalArgumentException("해당 id가 DB에 존재하지 않습니다.");
             }
         });
 
-        memberRepository.delete(member);
+        userRepository.delete(user);
         return "삭제되었습니다 id : " + id;
     }
 }
