@@ -16,9 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserApiController {
 
     private final UserService userService;
-    private final HttpSession session;
 
-    @PostMapping("/api/user")
+    @PostMapping("/auth/joinProc")
     public ResponseDto<Long> save(@RequestBody User user) {
         System.out.println("MemberApiController : save 호출됨");
         user.setRole(RoleType.USER);
@@ -26,17 +25,5 @@ public class UserApiController {
         return new ResponseDto<Long>(HttpStatus.OK.value(), result);
     }
 
-    @PostMapping("/api/user/login")
-    public ResponseDto<Integer> login(@RequestBody User user) {
-        System.out.println("MemberApiController : login 호출됨");
-        User principal = userService.login(user); // principal (접근주체)
-
-        // session 만들기
-        if (principal != null) {
-            session.setAttribute("principal", principal);
-        }
-
-        return new ResponseDto<Integer>(HttpStatus.OK.value(), 1);
-    }
 
 }
