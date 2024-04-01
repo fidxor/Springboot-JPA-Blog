@@ -16,8 +16,8 @@ import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 @EnableWebSecurity
 public class SecurityConfig{
 
-    @Bean  //Ioc가 됨
-    BCryptPasswordEncoder encode() {
+    @Bean   // IoC가 됨
+    BCryptPasswordEncoder encodePWD() {
         return new BCryptPasswordEncoder();
     }
 
@@ -45,7 +45,11 @@ public class SecurityConfig{
 
         http.formLogin(
                 f -> {
-                    f.loginPage("/auth/loginForm").loginProcessingUrl("/auth/loginProc").defaultSuccessUrl("/").failureUrl("/auth/loginForm");
+                    f
+                            .loginPage("/auth/loginForm")
+                            .loginProcessingUrl("/auth/loginProc") // 스프링 시큐리티가 해당주소로 요청오는 로그인을 가로채서 대신 로그인 해준다.
+                            .defaultSuccessUrl("/")
+                            .failureUrl("/auth/loginForm");
 
                 });
 
